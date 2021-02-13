@@ -1,0 +1,1 @@
+Desktop Client for the autoSlide camera rail

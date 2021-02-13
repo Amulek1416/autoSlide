@@ -1,0 +1,2 @@
+﻿"extrusion_width" = 0.4mm
+"wall_count"= 3
