@@ -15,8 +15,18 @@ class SerialHandler(Thread):
         self.port = port
         self.ser = serial.Serial(port=self.port, baudrate=baudrate)
         self.mutex = Lock()
-        ser.isopen()
         Thread.__init__(self)
+
+    def setPort(self, port):
+        if self.mutex.acquire():
+            if self.ser != None:
+                if self.ser.isOpen():
+                    self.ser.close()
+            
+            self.port = port
+            self.ser = serial.Serial(self.port, 115200)
+            # self.ser.open()
+            self.mutex.release()
 
     def run(self):
         """
