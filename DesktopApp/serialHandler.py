@@ -86,7 +86,9 @@ class SerialHandler(Thread):
         """
         if self.mutex.acquire():
             if self.txbuf == None:
+                self.mutex.release()
                 return
+
             self.ser.write(self.txbuf)
             self.txbuf = None
             self.mutex.release()
