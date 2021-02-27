@@ -11,9 +11,10 @@ class SerialHandler(Thread):
     ser = None
     mutex = None
 
-    def __init__(self, port, baudrate=115200):
+    def __init__(self, port=None, baudrate=115200):
         self.port = port
-        self.ser = serial.Serial(port=self.port, baudrate=baudrate)
+        if port != None:
+            self.ser = serial.Serial(port=self.port, baudrate=baudrate)
         self.mutex = Lock()
         Thread.__init__(self)
 
