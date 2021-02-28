@@ -4,6 +4,7 @@
 import wx
 import serial
 from slideRail import *
+import appMenuBar
 
 def mmToStep(mm):
     CONV = 40
@@ -15,6 +16,8 @@ class MyFrame(wx.Frame):
     def __init__(self):
         super().__init__(parent=None, title='Camera Mover')
         self.slideRail = SlideRail()
+        self.menuBar = appMenuBar.MenuBarHandler(self, 'Auto Slide', self.slideRail.serial.setPort)
+        
         ## create the window
         panel = wx.Panel(self)
         ## define the panel to be vertically stacked
