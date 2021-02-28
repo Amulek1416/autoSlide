@@ -52,8 +52,8 @@ class MyFrame(wx.Frame):
         speed = self.speed_box.GetValue()
         self.slideRail.steps = mmToStep(distance)
         self.slideRail.period = mmToStep(speed)
-        
-        self.slideRail.sendStepsAndPeriod()
+        self.slideRail.motor = 1
+        self.slideRail.sendStart()
         print(self.slideRail.json)
 ## run program
 if __name__ == '__main__':

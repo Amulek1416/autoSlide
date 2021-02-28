@@ -21,12 +21,17 @@ class SerialHandler():
         self.stopFlag = False
 
     def start(self):
-        self.stopFlag = False
-        self.serThread.start()
+        if self.mutex.acquire():
+            self.stopFlag = False
+            self.mutex.release()
+            self.serThread.start()
+        
     
     def stop(self):
-        self.stopFlag = True
-        self.serThread.join()
+        if self.mutex.acquire():
+            self.stopFlag = True
+            self.mutex.release()
+            self.serThread.join()
         
     def setPort(self, port):
         if self.mutex.acquire():
@@ -36,7 +41,6 @@ class SerialHandler():
             
             self.port = port
             self.ser = serial.Serial(self.port, 115200)
-            # self.ser.open()
             self.mutex.release()
 
     def run(self):
@@ -45,12 +49,17 @@ class SerialHandler():
             txbuf, sleep, then place any data received into the 
             rxbuf and sleep again.
         """
-        while not self.stopFlag:
+        cStopFlag = False
+        while not cStopFlag:
             if self.ser != None:
                 self.sendDataTask()
-                time.sleep(0.01)
+                time.sleep(0.1)
                 self.receiveDataTask()
-                time.sleep(0.01)
+                time.sleep(0.1)
+
+            if self.mutex.acquire():
+                cStopFlag = self.stopFlag
+                self.mutex.release()
         
     def isAvailable(self):
         """
@@ -93,7 +102,17 @@ class SerialHandler():
             Reads data into rxbuf
         """
         if self.mutex.acquire():
-            self.rxbuf += self.ser.read()
+            self.ser.timeout = 100
+            bytesToRead = self.ser.inWaiting()
+            if bytesToRead == 0: 
+                self.mutex.release()
+                return
+
+            if self.rxbuf == None:
+                self.rxbuf = self.ser.read(1)
+            else:
+                self.rxbuf = self.ser.read(1)
+
             self.mutex.release()
 
     def sendDataTask(self):
@@ -105,7 +124,7 @@ class SerialHandler():
                 self.mutex.release()
                 return
 
-            self.ser.write(self.txbuf)
+            self.ser.write(bytes(self.txbuf, 'ascii'))
             self.txbuf = None
             self.mutex.release()
 
