@@ -5,19 +5,18 @@ import time
 from threading import Thread, Lock
 
 class SerialHandler(Thread):
-    txbuf = None
-    rxbuf = None
-    serPort = None
-    ser = None
-    mutex = None
 
     def __init__(self, port=None, baudrate=115200):
         self.port = port
         if port != None:
             self.ser = serial.Serial(port=self.port, baudrate=baudrate)
         self.mutex = Lock()
+        self.txbuf = None
+        self.rxbuf = None
+        self.serPort = None
+        self.ser = None
         Thread.__init__(self)
-
+        
     def setPort(self, port):
         if self.mutex.acquire():
             if self.ser != None:
@@ -59,8 +58,11 @@ class SerialHandler(Thread):
             Fills up the txbuf
         """
         if self.mutex.acquire():
-            self.txbuf += data
-            self.mutex.release
+            if self.txbuf == None:
+                self.txbuf = data
+            else:
+                self.txbuf += data
+            self.mutex.release()
 
     def receiveData(self):
         """

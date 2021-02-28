@@ -14,6 +14,7 @@ def mmToStep(mm):
 class MyFrame(wx.Frame):
     def __init__(self):
         super().__init__(parent=None, title='Camera Mover')
+        self.slideRail = SlideRail()
         ## create the window
         panel = wx.Panel(self)
         ## define the panel to be vertically stacked
@@ -44,14 +45,13 @@ class MyFrame(wx.Frame):
     ## when button is pressed, say what was typed. If nothing typed, say nothing was entered
     def on_press(self, event):
         ## retrieve the values from the text boxes
-        slideRail = SlideRail()
         distance = self.distance_box.GetValue()
         speed = self.speed_box.GetValue()
-        slideRail.steps = mmToStep(distance)
-        slideRail.period = mmToStep(speed)
+        self.slideRail.steps = mmToStep(distance)
+        self.slideRail.period = mmToStep(speed)
         
-        slideRail.sendStepsAndPeriod()
-        print(slideRail.json)
+        self.slideRail.sendStepsAndPeriod()
+        print(self.slideRail.json)
 ## run program
 if __name__ == '__main__':
     app = wx.App()
