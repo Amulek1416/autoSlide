@@ -4,18 +4,29 @@ import glob
 import time
 from threading import Thread, Lock
 
-class SerialHandler(Thread):
+class SerialHandler():
 
     def __init__(self, port=None, baudrate=115200):
         self.port = port
+        
         if port != None:
             self.ser = serial.Serial(port=self.port, baudrate=baudrate)
+
+        self.serThread = Thread(target=self.run)
         self.mutex = Lock()
         self.txbuf = None
         self.rxbuf = None
         self.serPort = None
         self.ser = None
-        Thread.__init__(self)
+        self.stopFlag = False
+
+    def start(self):
+        self.stopFlag = False
+        self.serThread.start()
+    
+    def stop(self):
+        self.stopFlag = True
+        self.serThread.join()
         
     def setPort(self, port):
         if self.mutex.acquire():
@@ -34,10 +45,12 @@ class SerialHandler(Thread):
             txbuf, sleep, then place any data received into the 
             rxbuf and sleep again.
         """
-        self.sendData()
-        time.sleep(0.01)
-        self.receiveData()
-        time.sleep(0.01)
+        while not self.stopFlag:
+            if self.ser != None:
+                self.sendDataTask()
+                time.sleep(0.01)
+                self.receiveDataTask()
+                time.sleep(0.01)
         
     def isAvailable(self):
         """
