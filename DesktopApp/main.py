@@ -16,9 +16,6 @@ class MyFrame(wx.Frame):
     def __init__(self):
         super().__init__(parent=None, title='Auto Slide')
         
-        self.slideRail = SlideRail()
-        
-        self.menubar = appMenuBar.MenuBarHandler(self, 'Auto Slide', self.slideRail.serial.setPort)
         ## create the window
         self.panel = wx.Panel(self)
         ## define the panel to be vertically stacked
@@ -46,7 +43,10 @@ class MyFrame(wx.Frame):
         # #apply the sizer formatting
         self.createSizers()
         
+        self.slideRail = SlideRail()
+        self.menubar = appMenuBar.MenuBarHandler(self, 'Auto Slide', self.slideRail.serial.setPort)
         self.Show()
+        self.slideRail.serial.start()
         
     def createSizers(self):
         gridSizer       = wx.GridSizer(rows=3, cols=1, hgap=1, vgap=1)

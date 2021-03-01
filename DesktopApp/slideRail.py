@@ -4,7 +4,6 @@ class SlideRail:
     
     def __init__(self):
         self.serial = serialHandler.SerialHandler(port=None)
-        self.serial.start()
         self.steps = 0
         self.period = 0
         self.start = 0
