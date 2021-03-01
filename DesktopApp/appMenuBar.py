@@ -1,6 +1,7 @@
 import wx
 from serialHandler import *
 from functools import partial
+import sys
 
 class MenuBarHandler(wx.Frame):
     
@@ -18,7 +19,12 @@ class MenuBarHandler(wx.Frame):
         self.menubar = wx.MenuBar()
 
         self.portMenu = wx.Menu()
-        self.refreshItem = wx.MenuItem(self.portMenu, 0, text='Refresh', kind=wx.ITEM_NORMAL)
+        
+        if sys.platform.startswith('darwin'):
+            self.refreshItem = wx.MenuItem(self.portMenu, 1, text='Refresh', kind=wx.ITEM_NORMAL)
+        else:
+            self.refreshItem = wx.MenuItem(self.portMenu, 0, text='Refresh', kind=wx.ITEM_NORMAL)
+            
         self.parent.Bind(wx.EVT_MENU, self.onRefresh, self.refreshItem)
         self.portMenu.Append(self.refreshItem)
         self.portMenu.AppendSeparator()
