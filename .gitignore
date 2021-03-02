@@ -5,3 +5,7 @@
 *.pyz
 ./DesktopApp/build/*
 *.spec
+*.manifest
+*.html
+*.txt
+*.exe.*
