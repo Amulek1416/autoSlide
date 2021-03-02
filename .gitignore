@@ -1,1 +1,7 @@
 *pyc
+*toc
+*.zip
+*.pkg
+*.pyz
+./DesktopApp/build/*
+*.spec
