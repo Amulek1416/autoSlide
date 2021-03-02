@@ -15,7 +15,10 @@ def mmToStep(mm):
 class MyFrame(wx.Frame):
     def __init__(self):
         super().__init__(parent=None, title='Auto Slide')
-        
+
+        self.slideRail = SlideRail()
+        self.menubar = appMenuBar.MenuBarHandler(self, 'Auto Slide', self.slideRail.serial.setPort)
+
         ## create the window
         self.panel = wx.Panel(self)
         ## define the panel to be vertically stacked
@@ -40,11 +43,12 @@ class MyFrame(wx.Frame):
         # attach the function on_press to the button
         self.lockBtn.Bind(wx.EVT_BUTTON, self.lock)
 
+        # Attach OnClose()
+        self.Bind(wx.EVT_CLOSE, self.OnClose)
+
         # #apply the sizer formatting
         self.createSizers()
         
-        self.slideRail = SlideRail()
-        self.menubar = appMenuBar.MenuBarHandler(self, 'Auto Slide', self.slideRail.serial.setPort)
         self.Show()
         self.slideRail.serial.start()
         
@@ -106,6 +110,11 @@ class MyFrame(wx.Frame):
             print(self.slideRail.json)
             self.lockBtn.SetLabel('Motor On')
             self.startBtn.SetLabel('Start')
+
+    def OnClose(self, event):
+        self.slideRail.serial.stop()
+        self.Destroy()
+
 ## run program
 if __name__ == '__main__':
     app = wx.App()
